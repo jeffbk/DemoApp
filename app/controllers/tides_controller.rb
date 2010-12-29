@@ -14,12 +14,16 @@ class TidesController < ApplicationController
                   JOIN constituents ON constituents.name = constants.name
                   JOIN modulations mod ON mod.name = constants.name
                   WHERE d.id = ? AND mod.year = ?', params[:id], 2011)
+    @station_name = db.execute('SELECT name from data_sets WHERE id = ?', params[:id])
     db.close()
     tnow = Time.new()
     tbase = Time.utc(2011, 1, 1, 0, 0)
-    t = (tnow.to_i - tbase.to_i) / 3600.0
-    @heights = Array.new(24,0)
-    24.times do |i|
+    t = (tnow.to_i - tbase.to_i) / 60.0
+    @minutes = 2880
+    @heights = []
+    @ticks = []
+    @test
+    (0..@minutes).step(6) do |i|
       height = 0 
       rows.each do |row|
         speed = Float(row[1])
@@ -27,12 +31,15 @@ class TidesController < ApplicationController
         nf = Float(row[4])
         phase = Float(row[3])
         eq = Float(row[5]) 
-        h = amp * nf * Math.cos((speed * (t + i) + eq - phase).d_to_r)
+        h = amp * nf * Math.cos((speed * ((t + i) / 60.0) + eq - phase).d_to_r)
         height = height + h
       end
-      @heights[i] = height
+      @heights << [i, height]
+      if i % 480 == 0 then
+        @ticks << [i, Time.at(tnow.to_i + i * 60).strftime('%m-%d %H:%M %Z')]
+      end
     end
-                    
+    @test = '"hello"'            
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @rows }

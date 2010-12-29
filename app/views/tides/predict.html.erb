@@ -1,11 +1,41 @@
-<head>
-    <script src="http://code.jquery.com/jquery-1.4.4.min.js" type="text/javascript"></script>
-</head>
+<%= javascript_include_tag "canvas2image" %>
+<%= javascript_include_tag "canvastext" %>
+<%= javascript_include_tag "flotr-0.2.0-alpha" %>
 <h1>Tides#predict</h1>
 <p>Find me in app/views/tides/predict.html.erb</p>
 
-<table>
-    <% @heights.each do |height| %>
-        <tr><td><%= height %></tr></td>
-    <% end %>
-</table>
+<div id="graph" style="width: 600px; height:400px;"></div>
+
+<script type="text/javascript">
+    /**
+     * Wait till dom's finished loading. This graph show a 5 series. The axis are configured.
+     */
+Event.observe(window, 'load', function(){     
+        /**
+         * Draw the graph.
+         */
+        var f = Flotr.draw(
+            $('graph'),[ 
+                {data:<%= @heights.to_json %>}, 
+            ],{
+                xaxis:{
+                    ticks: [<% @ticks.each do |tick| %> [<%= tick[0] %>, '<%= tick[1] %>'], <% end %>],
+                    min: 0,     // => part of the series is not displayed.
+                    max: <%= @minutes %>  // => part of the series is not displayed.
+                },
+                yaxis:{
+                    noTicks: 6,
+                    min: -5,        // => part of the series is not displayed.
+                    max: 5  // => part of the series is not displayed.
+                },
+                grid:{
+                    verticalLines:true
+                },
+                legend: {
+      position: 'nw'
+    },
+    title: '<%= @station_name %>',
+    subtitle: 'This is a subtitle'
+        });
+    });
+</script>
