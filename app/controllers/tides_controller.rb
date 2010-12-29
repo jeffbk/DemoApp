@@ -1,3 +1,9 @@
+class Numeric
+  def d_to_r
+    self * Math::PI / 180 
+  end
+end
+
 
 class TidesController < ApplicationController
   def predict
@@ -11,26 +17,26 @@ class TidesController < ApplicationController
     db.close()
     tnow = Time.new()
     tbase = Time.utc(2011, 1, 1, 0, 0)
-    t = (tnow.to_i - tbase.to_i) / 3600
-    @height = 0 
-    rows.each do |row|
-      speed = Float(row[1])
-      amp = Float(row[2])
-      nf = Float(row[4])
-      phase = Float(row[3])
-      eq = Float(row[5]) 
-      h = amp * nf * Math.cos(speed * t + eq - phase)
-      @height = @height + h
+    t = (tnow.to_i - tbase.to_i) / 3600.0
+    @heights = Array.new(24,0)
+    24.times do |i|
+      height = 0 
+      rows.each do |row|
+        speed = Float(row[1])
+        amp = Float(row[2])
+        nf = Float(row[4])
+        phase = Float(row[3])
+        eq = Float(row[5]) 
+        h = amp * nf * Math.cos((speed * (t + i) + eq - phase).d_to_r)
+        height = height + h
+      end
+      @heights[i] = height
     end
                     
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @rows }
     end
-  end
-  
-  def degreesToRadians(degrees)
-    return Math::PI / 180.0 * degrees
   end
 
 end

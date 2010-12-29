@@ -2,5 +2,7 @@
 <p>Find me in app/views/tides/predict.html.erb</p>
 
 <table>
-<%= @height %>
+    <% @heights.each do |height| %>
+        <tr><td><%= height %></tr></td>
+    <% end %>
 </table>
