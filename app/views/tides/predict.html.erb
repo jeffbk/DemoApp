@@ -1,6 +1,5 @@
 <%= javascript_include_tag "flotr-0.2.0-alpha" %>
-<h1>Tides#predict</h1>
-<p>Find me in app/views/tides/predict.html.erb</p>
+<h1>Tide Prediction</h1>
 
 <div id="graph" style="width: 600px; height:400px;"></div>
 
@@ -17,14 +16,14 @@ Event.observe(window, 'load', function(){
                 {data:<%= @heights.to_json %>}, 
             ],{
                 xaxis:{
-                    ticks: [<% @ticks.each do |tick| %> [<%= tick[0] %>, '<%= tick[1] %>'], <% end %>],
+                    ticks: [<% @ticks.each do |tick| %> [<%= tick[0] %>, "<%= tick[1].strftime('%m-%d %H:%M %Z') %>"], <% end %>],
                     min: 0,     // => part of the series is not displayed.
                     max: <%= @minutes %>  // => part of the series is not displayed.
                 },
                 yaxis:{
                     noTicks: 6,
-                    min: -5,        // => part of the series is not displayed.
-                    max: 5  // => part of the series is not displayed.
+                    min: <%= @ymin.floor %>,        // => part of the series is not displayed.
+                    max: <%= @ymax.ceil %>  // => part of the series is not displayed.
                 },
                 grid:{
                     verticalLines:true
@@ -33,7 +32,7 @@ Event.observe(window, 'load', function(){
       position: 'nw'
     },
     title: '<%= @station_name %>',
-    subtitle: 'This is a subtitle'
+    subtitle: "<%= @ticks[0][1].strftime('%a %b %d %H:%M %Z') %> to <%= @ticks[-1][1].strftime('%a %b %d %H:%M %Z') %>"
         });
     });
 </script>

@@ -16,13 +16,14 @@ class TidesController < ApplicationController
                   WHERE d.id = ? AND mod.year = ?', params[:id], 2011)
     @station_name = db.execute('SELECT name from data_sets WHERE id = ?', params[:id])
     db.close()
-    tnow = Time.new()
-    tbase = Time.utc(2011, 1, 1, 0, 0)
-    t = (tnow.to_i - tbase.to_i) / 60.0
+    tnow = Time.new().to_i / 900 * 900 
+    tbase = Time.utc(2011, 1, 1, 0, 0).to_i
+    t = (tnow - tbase) / 60.0
     @minutes = 2880
     @heights = []
     @ticks = []
-    @test
+    @ymax = 0
+    @ymin = 0
     (0..@minutes).step(6) do |i|
       height = 0 
       rows.each do |row|
@@ -36,10 +37,11 @@ class TidesController < ApplicationController
       end
       @heights << [i, height]
       if i % 480 == 0 then
-        @ticks << [i, Time.at(tnow.to_i + i * 60).strftime('%m-%d %H:%M %Z')]
+        @ticks << [i, Time.at(tnow + i * 60)]
       end
-    end
-    @test = '"hello"'            
+      if height > @ymax then @ymax = height end
+      if height < @ymin then @ymin = height end
+    end           
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @rows }
