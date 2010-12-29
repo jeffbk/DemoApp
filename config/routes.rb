@@ -1,5 +1,5 @@
 DemoApp::Application.routes.draw do
-  get "tides/predict"
+  get "tides/predict/:id" => 'tides#predict'
 
   resources :microposts
 
