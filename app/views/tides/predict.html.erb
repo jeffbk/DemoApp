@@ -1,38 +1,37 @@
+<!--[if IE]><%= javascript_include_tag "excanvas" %></script><![endif]-->
 <%= javascript_include_tag "flotr-0.2.0-alpha" %>
+
+<%= stylesheet_link_tag 'blueprint/screen', :media => 'screen' %>
+<%= stylesheet_link_tag 'blueprint/print',  :media => 'print' %>
 <h1>Tide Prediction</h1>
 
 <div id="graph" style="width: 600px; height:400px;"></div>
 
 <script type="text/javascript">
-    /**
-     * Wait till dom's finished loading. This graph show a 5 series. The axis are configured.
-     */
+// draw graph when finished loading
 Event.observe(window, 'load', function(){     
-        /**
-         * Draw the graph.
-         */
-        var f = Flotr.draw(
-            $('graph'),[ 
-                {data:<%= @heights.to_json %>}, 
-            ],{
-                xaxis:{
-                    ticks: [<% @ticks.each do |tick| %> [<%= tick[0] %>, "<%= tick[1].strftime('%m-%d %H:%M %Z') %>"], <% end %>],
-                    min: 0,     // => part of the series is not displayed.
-                    max: <%= @minutes %>  // => part of the series is not displayed.
-                },
-                yaxis:{
-                    noTicks: 6,
-                    min: <%= @ymin.floor %>,        // => part of the series is not displayed.
-                    max: <%= @ymax.ceil %>  // => part of the series is not displayed.
-                },
-                grid:{
-                    verticalLines:true
-                },
-                legend: {
-      position: 'nw'
-    },
-    title: '<%= @station_name %>',
-    subtitle: "<%= @ticks[0][1].strftime('%a %b %d %H:%M %Z') %> to <%= @ticks[-1][1].strftime('%a %b %d %H:%M %Z') %>"
-        });
+    // draw graph
+    var f = Flotr.draw(
+        $('graph'), 
+        [{data:<%= @heights.to_json %>}],{
+            xaxis:{
+                ticks: [<% @ticks.each do |tick| %> [<%= tick[0] %>, "<%= tick[1].strftime('%m-%d %H:%M %Z') %>"], <% end %>],
+                min: 0,
+                max: <%= @minutes %>
+            },
+            yaxis:{
+                noTicks: 6,
+                min: <%= @ymin.floor %>,
+                max: <%= @ymax.ceil %>
+            },
+            grid:{
+                verticalLines:true
+            },
+            legend: {
+                position: 'nw'
+            },
+            title: '<%= @station_name %>',
+            subtitle: "<%= @ticks[0][1].strftime('%a %b %d %H:%M %Z') %> to <%= @ticks[-1][1].strftime('%a %b %d %H:%M %Z') %>"
     });
+});
 </script>
