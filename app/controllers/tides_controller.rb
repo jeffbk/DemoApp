@@ -4,21 +4,25 @@ class Numeric
   end
 end
 
-
 class TidesController < ApplicationController
   def predict
+    tnow = Time.new()
+    year = Time.new().year
+    year = year + 1 if tnow.month > 6
     db = SQLite3::Database.new('config/harmdb')
+    # get harmonic data
     rows = db.execute('SELECT constituents.name, constituents.speed, constants.amp,
                   constants.phase, mod.node_factor, mod.equilibrium FROM data_sets d
                   JOIN constants ON constants.id = d.id
                   JOIN constituents ON constituents.name = constants.name
                   JOIN modulations mod ON mod.name = constants.name
-                  WHERE d.id = ? AND mod.year = ?', params[:id], 2011)
+                  WHERE d.id = ? AND mod.year = ?', params[:id], year)
+    # get station name
     @station_name = db.execute('SELECT name from data_sets WHERE id = ?', params[:id])
     db.close()
-    tnow = Time.new().to_i / 900 * 900 
+
     tbase = Time.utc(2011, 1, 1, 0, 0).to_i
-    t = (tnow - tbase) / 60.0
+    t = ((tnow.to_i / 900 * 900)  - tbase.to_i) / 60.0  # set to nearest quarter hour
     @minutes = 2880
     @heights = []
     @ticks = []
@@ -37,7 +41,7 @@ class TidesController < ApplicationController
       end
       @heights << [i, height]
       if i % 480 == 0 then
-        @ticks << [i, Time.at(tnow + i * 60)]
+        @ticks << [i, Time.at(tnow.to_i + i * 60)]
       end
       if height > @ymax then @ymax = height end
       if height < @ymin then @ymin = height end
