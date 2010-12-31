@@ -20,9 +20,8 @@ class TidesController < ApplicationController
     # get station name
     @station_name = db.execute('SELECT name from data_sets WHERE id = ?', params[:id])
     db.close()
-
-    tbase = Time.utc(2011, 1, 1, 0, 0).to_i
-    t = ((tnow.to_i / 900 * 900)  - tbase.to_i) / 60.0  # set to nearest quarter hour
+    tsec = tnow.to_i / 900 * 900 # truncate to nearest quarter hour
+    t = (tsec - Time.utc(year, 1, 1, 0, 0).to_i) / 60.0  
     @minutes = 2880
     @heights = []
     @ticks = []
@@ -41,7 +40,7 @@ class TidesController < ApplicationController
       end
       @heights << [i, height]
       if i % 480 == 0 then
-        @ticks << [i, Time.at(tnow.to_i + i * 60)]
+        @ticks << [i, Time.at(tsec + i * 60)]
       end
       if height > @ymax then @ymax = height end
       if height < @ymin then @ymin = height end
