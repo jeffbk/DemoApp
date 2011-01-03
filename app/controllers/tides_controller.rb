@@ -22,7 +22,7 @@ class TidesController < ApplicationController
     db.close()
     tsec = tnow.to_i / 900 * 900 # truncate to nearest quarter hour
     t = (tsec - Time.utc(year, 1, 1, 0, 0).to_i) / 60.0  
-    minutes = 2880
+    minutes = 1440
     @heights = []
     @ticks = []
     @ymax = 0
