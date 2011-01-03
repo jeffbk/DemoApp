@@ -22,12 +22,12 @@ class TidesController < ApplicationController
     db.close()
     tsec = tnow.to_i / 900 * 900 # truncate to nearest quarter hour
     t = (tsec - Time.utc(year, 1, 1, 0, 0).to_i) / 60.0  
-    @minutes = 2880
+    minutes = 2880
     @heights = []
     @ticks = []
     @ymax = 0
     @ymin = 0
-    (0..@minutes).step(6) do |i|
+    (0..minutes).step(6) do |i|
       height = 0 
       rows.each do |row|
         speed = Float(row[1])
