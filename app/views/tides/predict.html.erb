@@ -10,7 +10,7 @@ Event.observe(window, 'load', function(){
     // draw graph
     var f = Flotr.draw(
         $('graph'), 
-        [{data:<%= @heights.to_json %>}],{
+        [{data:<%= @datapoints.to_json %>}],{
             xaxis:{
                 ticks: [<% @ticks.each do |tick| %> [<%= tick[0] %>, "<%= tick[1].strftime('%m-%d %H:%M %Z') %>"], <% end %>],
 
