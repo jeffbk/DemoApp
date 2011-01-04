@@ -12,7 +12,7 @@ Event.observe(window, 'load', function(){
         $('graph'), 
         [{data:<%= @datapoints.to_json %>}],{
             xaxis:{
-                ticks: [<% @ticks.each do |tick| %> [<%= tick[0] %>, "<%= tick[1].strftime('%m-%d %H:%M %Z') %>"], <% end %>],
+                ticks: [<% @xaxis_ticks.each do |tick| %> [<%= tick[0] %>, "<%= tick[1].strftime('%m-%d %H:%M %Z') %>"], <% end %>],
 
             },
             yaxis:{
@@ -27,7 +27,7 @@ Event.observe(window, 'load', function(){
                 position: 'nw'
             },
             title: '<%= @station_name %>',
-            subtitle: "<%= @ticks[0][1].strftime('%a %b %d %H:%M %Z') %> to <%= @ticks[-1][1].strftime('%a %b %d %H:%M %Z') %>"
+            subtitle: "<%= @xaxis_ticks[0][1].strftime('%a %b %d %H:%M %Z') %> to <%= @xaxis_ticks[-1][1].strftime('%a %b %d %H:%M %Z') %>"
     });
 });
 </script>
